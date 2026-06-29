@@ -1,4 +1,4 @@
-import { useState } from 'react'
+// TopNav.tsx — top navigation bar for Urban Heat Digital Twin
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type City = 'Bengaluru' | 'Delhi' | 'Mumbai' | 'Chennai' | 'Hyderabad'
