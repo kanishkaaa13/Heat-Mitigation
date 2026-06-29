@@ -4,6 +4,7 @@ import { LeftSidebar } from './LeftSidebar'
 import { CenterMapPanel } from './CenterMapPanel'
 import { RightPanel } from './RightPanel'
 import { BottomAnalyticsPanel } from './BottomAnalyticsPanel'
+import { AiChatAssistant } from './AiChatAssistant'
 
 // Today's date in YYYY-MM-DD for the default date picker value
 const todayISO = new Date().toISOString().slice(0, 10)
@@ -75,6 +76,8 @@ function App() {
         </div>
         <BottomAnalyticsPanel />
       </footer>
+
+      <AiChatAssistant />
     </div>
   )
 }
