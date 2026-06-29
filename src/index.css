@@ -201,3 +201,83 @@
 .sidebar-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 229, 255, 0.25);
 }
+
+/* ── Center Map Animations ─────────────────────────────────────────────── */
+.hotspot-block {
+  animation: hotspotPulse 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes hotspotPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+}
+
+.wind-arrow {
+  animation: windSlide 6s linear infinite;
+}
+
+@keyframes windSlide {
+  0% {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(980px);
+    opacity: 0;
+  }
+}
+
+.builder-ripple {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(0, 229, 255, 0.75);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  animation: rippleExpand 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+.builder-float {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: #7dd3fc;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  animation: floatUpFade 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes rippleExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes floatUpFade {
+  0% {
+    transform: translate(-50%, -50%) translateY(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(-40px);
+    opacity: 0;
+  }
+}

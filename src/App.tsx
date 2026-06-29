@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import {
-  Map,
   Activity,
   Settings,
 } from 'lucide-react'
 import { TopNav, type TopNavState } from './TopNav'
 import { LeftSidebar } from './LeftSidebar'
+import { CenterMapPanel } from './CenterMapPanel'
 
 // Today's date in YYYY-MM-DD for the default date picker value
 const todayISO = new Date().toISOString().slice(0, 10)
@@ -26,6 +26,10 @@ function App() {
   const handleNavChange = (patch: Partial<TopNavState>) =>
     setNavState(prev => ({ ...prev, ...patch }))
 
+  const handleZoneClick = (zone: { zoneName: string; temperature: number; riskLevel: 'Low' | 'Moderate' | 'Critical' }) => {
+    console.info('Zone selected:', zone)
+  }
+
   return (
     <div className="h-screen w-screen flex flex-col bg-[#0B1220] text-gray-200 overflow-hidden font-sans p-2 gap-2 box-border">
 
@@ -39,27 +43,14 @@ function App() {
         <LeftSidebar activeYear={activeYear} onYearChange={setActiveYear} />
 
         {/* CENTER MAP */}
-        <main className="flex-1 glass-card flex flex-col relative overflow-hidden">
-          <div className="absolute top-4 left-4 z-10 bg-[#0B1220]/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/5 text-xs text-brand-cyan font-mono flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse" />
-            ACTIVE TWIN AREA: {navState.city.toUpperCase()} ({activeYear})
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center gap-3 p-4">
-            <div className="w-16 h-16 rounded-full bg-brand-cyan/5 border border-brand-cyan/20 flex items-center justify-center text-brand-cyan shadow-[0_0_20px_rgba(0,229,255,0.15)]">
-              <Map size={32} />
-            </div>
-            <div className="text-center">
-              <h2 className="text-xl font-bold tracking-wide text-white">CENTER MAP</h2>
-              <p className="text-xs text-gray-400 mt-1 max-w-sm">
-                Interactive spatial viewer · Layer: <span className="text-brand-cyan font-mono">{navState.layer}</span> · Scenario: <span className="text-brand-orange font-mono">{navState.scenario}</span> · Year: <span className="text-brand-cyan font-mono">{activeYear}</span>
-              </p>
-            </div>
-          </div>
-
-          <div className="absolute bottom-4 right-4 text-[10px] text-white/30 font-mono">
-            COORDS: 12.9716° N, 77.5946° E
-          </div>
+        <main className="flex-1 glass-card relative overflow-hidden">
+          <CenterMapPanel
+            activeYear={activeYear}
+            city={navState.city}
+            layer={navState.layer}
+            scenario={navState.scenario}
+            onZoneClick={handleZoneClick}
+          />
         </main>
 
         {/* RIGHT PANEL */}
