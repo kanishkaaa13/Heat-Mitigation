@@ -16,13 +16,104 @@
   }
 }
 
-/* Glassmorphism custom components */
+/* ── Glassmorphism card ─────────────────────────────────────────────────── */
 @layer components {
   .glass-card {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 18px;
   }
+}
+
+/* ── Nav Select ─────────────────────────────────────────────────────────── */
+.nav-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.85);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.nav-select:hover,
+.nav-select:focus {
+  border-color: rgba(0, 229, 255, 0.35);
+  box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.15);
+}
+/* Remove white option backgrounds in Chromium */
+.nav-select option {
+  background: #0f1928;
+  color: #e2e8f0;
+}
+
+/* ── Nav Input (date) ───────────────────────────────────────────────────── */
+.nav-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.85);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color-scheme: dark;   /* makes the calendar picker dark in Chrome/Edge */
+}
+.nav-input:hover,
+.nav-input:focus {
+  border-color: rgba(0, 229, 255, 0.35);
+  box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.15);
+}
+
+/* ── Range Slider ───────────────────────────────────────────────────────── */
+.nav-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.10);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.nav-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    #00E5FF 0%,
+    #00E5FF var(--track-fill, 0%),
+    rgba(255,255,255,0.10) var(--track-fill, 0%),
+    rgba(255,255,255,0.10) 100%
+  );
+}
+.nav-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00E5FF;
+  box-shadow: 0 0 6px rgba(0, 229, 255, 0.8);
+  border: 2px solid #0B1220;
+  margin-top: -5px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.nav-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 12px rgba(0, 229, 255, 1);
+}
+.nav-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00E5FF;
+  box-shadow: 0 0 6px rgba(0, 229, 255, 0.8);
+  border: 2px solid #0B1220;
+  cursor: pointer;
+}
+.nav-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.10);
+}
+.nav-slider::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: #00E5FF;
 }
