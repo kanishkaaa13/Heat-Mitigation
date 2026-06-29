@@ -6,9 +6,7 @@ import {
   Activity, 
   Layers, 
   Settings, 
-  Thermometer, 
-  HelpCircle,
-  Menu
+  HelpCircle
 } from 'lucide-react'
 
 function App() {
