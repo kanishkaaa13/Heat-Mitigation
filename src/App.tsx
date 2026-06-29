@@ -1,11 +1,9 @@
 import { useState } from 'react'
-import {
-  Activity,
-} from 'lucide-react'
 import { TopNav, type TopNavState } from './TopNav'
 import { LeftSidebar } from './LeftSidebar'
 import { CenterMapPanel } from './CenterMapPanel'
 import { RightPanel } from './RightPanel'
+import { BottomAnalyticsPanel } from './BottomAnalyticsPanel'
 
 // Today's date in YYYY-MM-DD for the default date picker value
 const todayISO = new Date().toISOString().slice(0, 10)
@@ -75,17 +73,7 @@ function App() {
             <div>ALBEDO AVG: <span className="text-brand-cyan font-bold">0.18</span></div>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center gap-3 p-4">
-          <div className="w-12 h-12 rounded-full bg-brand-cyan/5 border border-brand-cyan/20 flex items-center justify-center text-brand-cyan">
-            <Activity size={24} />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-white">BOTTOM ANALYTICS</h3>
-            <p className="text-xs text-gray-400 mt-0.5 max-w-xl">
-              Temporal analysis chart shell. Displays heat stress indices, simulated microclimate variations, and historic urban land surface temperature (LST) trends.
-            </p>
-          </div>
-        </div>
+        <BottomAnalyticsPanel />
       </footer>
     </div>
   )

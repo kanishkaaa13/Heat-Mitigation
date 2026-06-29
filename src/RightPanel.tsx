@@ -1,4 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import type { ZoneData } from './CenterMapPanel'
 
 type RightPanelTab = 'heat' | 'cool' | 'future'
@@ -18,6 +28,23 @@ const interventions = [
   { id: 'roof', icon: '🏠', name: 'Cool Roofs', cooling: 1.8, cost: 6.8 },
   { id: 'road', icon: '🟦', name: 'Reflective Roads', cooling: 1.2, cost: 3.1 },
   { id: 'water', icon: '💧', name: 'Water Body', cooling: 0.9, cost: 9.5 },
+]
+
+const futureScenarioData = [
+  { year: 2016, optimistic: 31.4, business: 33.2, worst: 35.7 },
+  { year: 2017, optimistic: 31.8, business: 33.7, worst: 36.3 },
+  { year: 2018, optimistic: 32.1, business: 34.2, worst: 36.8 },
+  { year: 2019, optimistic: 32.4, business: 34.7, worst: 37.3 },
+  { year: 2020, optimistic: 32.9, business: 35.2, worst: 37.9 },
+  { year: 2021, optimistic: 33.3, business: 35.7, worst: 38.4 },
+  { year: 2022, optimistic: 33.8, business: 36.2, worst: 39.0 },
+  { year: 2023, optimistic: 34.4, business: 36.9, worst: 39.6 },
+  { year: 2024, optimistic: 35.0, business: 37.5, worst: 40.2 },
+  { year: 2025, optimistic: 35.6, business: 38.1, worst: 40.8 },
+  { year: 2026, optimistic: 36.2, business: 38.8, worst: 41.5 },
+  { year: 2030, optimistic: 37.8, business: 41.6, worst: 45.7 },
+  { year: 2040, optimistic: 39.4, business: 44.8, worst: 49.3 },
+  { year: 2050, optimistic: 40.7, business: 47.5, worst: 53.2 },
 ]
 
 export function RightPanel({ selectedZone }: RightPanelProps) {
@@ -261,15 +288,39 @@ export function RightPanel({ selectedZone }: RightPanelProps) {
               </div>
             </div>
           ) : (
-            <div className="tab-panel rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-cyan">
-                Future Heat
+            <div className="tab-panel space-y-4">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-cyan">
+                  Future Heat
+                </div>
+                <div className="mt-3 text-sm text-gray-300">
+                  Forecasted LST pathways for the selected zone across optimistic, business-as-usual, and worst-case scenarios.
+                </div>
               </div>
-              <div className="mt-3 text-sm text-gray-300">
-                Under the 2050 projection, this corridor is likely to exceed the citywide heat threshold during peak afternoon hours.
-              </div>
-              <div className="mt-4 rounded-xl border border-orange-400/20 bg-orange-400/10 p-3 text-sm text-orange-100">
-                Projected peak LST: 49.7°C by 2050 with current land-use patterns.
+
+              <div className="rounded-2xl border border-white/10 bg-black/20 p-3 backdrop-blur">
+                <div className="mb-2 flex items-center justify-between">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-cyan">Scenario Trends</div>
+                  <div className="flex gap-3 text-[10px] text-gray-300">
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-400" /> Optimistic</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-brand-orange" /> BAU</span>
+                    <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-red-500" /> Worst Case</span>
+                  </div>
+                </div>
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={futureScenarioData}>
+                      <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />
+                      <XAxis dataKey="year" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }} axisLine={false} tickLine={false} />
+                      <Tooltip />
+                      <Legend wrapperStyle={{ fontSize: '10px', color: 'rgba(255,255,255,0.75)' }} />
+                      <Line type="monotone" dataKey="optimistic" stroke="#4ADE80" strokeWidth={2} dot={{ r: 3 }} animationDuration={900} />
+                      <Line type="monotone" dataKey="business" stroke="#FF6B35" strokeWidth={2} dot={{ r: 3 }} strokeDasharray="5 5" animationDuration={900} />
+                      <Line type="monotone" dataKey="worst" stroke="#FF4444" strokeWidth={2} dot={{ r: 3 }} strokeDasharray="3 3" animationDuration={900} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           )}
