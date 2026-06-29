@@ -117,3 +117,87 @@
   border-radius: 2px;
   background: #00E5FF;
 }
+
+/* ── Left Sidebar Checkbox ──────────────────────────────────────────────── */
+.sidebar-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.03);
+  outline: none;
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition: all 0.2s ease-in-out;
+}
+.sidebar-checkbox:hover {
+  border-color: rgba(0, 229, 255, 0.4);
+}
+.sidebar-checkbox:checked {
+  border-color: #00E5FF;
+  background: rgba(0, 229, 255, 0.12);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+}
+.sidebar-checkbox:checked::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background-color: #00E5FF;
+  border-radius: 1px;
+  box-shadow: 0 0 4px #00E5FF;
+}
+
+/* ── Timeline Vertical Slider ───────────────────────────────────────────── */
+.timeline-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  transform: rotate(270deg); /* Rotates layout to vertical orientation */
+  background: rgba(255, 255, 255, 0.08);
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.timeline-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00E5FF;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+  border: 2.5px solid #0B1220;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+.timeline-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 14px rgba(0, 229, 255, 1);
+  transform: scale(1.1);
+}
+.timeline-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00E5FF;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+  border: 2.5px solid #0B1220;
+  cursor: pointer;
+}
+
+/* ── Custom Scrollbar ───────────────────────────────────────────────────── */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 229, 255, 0.25);
+}

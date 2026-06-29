@@ -1,20 +1,18 @@
 import { useState } from 'react'
 import {
-  ChevronLeft,
-  ChevronRight,
   Map,
   Activity,
-  Layers,
   Settings,
-  HelpCircle,
 } from 'lucide-react'
 import { TopNav, type TopNavState } from './TopNav'
+import { LeftSidebar } from './LeftSidebar'
 
 // Today's date in YYYY-MM-DD for the default date picker value
 const todayISO = new Date().toISOString().slice(0, 10)
 
 function App() {
-  const [isLeftCollapsed, setIsLeftCollapsed] = useState(false)
+  // ── Left Sidebar Timeline state ──────────────────────────────────────────
+  const [activeYear, setActiveYear] = useState(2026)
 
   // ── Top Nav state ──────────────────────────────────────────────────────
   const [navState, setNavState] = useState<TopNavState>({
@@ -38,68 +36,13 @@ function App() {
       <div className="flex-1 flex gap-2 overflow-hidden min-h-0">
 
         {/* LEFT SIDEBAR */}
-        <aside
-          className={`
-            ${isLeftCollapsed ? 'w-16' : 'w-64'}
-            shrink-0 glass-card transition-all duration-300 ease-in-out
-            flex flex-col overflow-hidden relative
-          `}
-        >
-          <div className="p-4 flex items-center justify-between border-b border-white/5">
-            {!isLeftCollapsed && (
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-mono font-medium">
-                LEFT SIDEBAR
-              </span>
-            )}
-            {isLeftCollapsed && (
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-mono font-medium mx-auto">
-                LS
-              </span>
-            )}
-            <button
-              onClick={() => setIsLeftCollapsed(!isLeftCollapsed)}
-              className="p-1 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 hover:border-brand-cyan/30 text-gray-400 hover:text-brand-cyan transition-colors"
-              title={isLeftCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-            >
-              {isLeftCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-            </button>
-          </div>
-
-          <div className="flex-1 p-3 flex flex-col gap-2 overflow-y-auto">
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-brand-cyan/20 text-brand-cyan">
-              <Map size={18} />
-              {!isLeftCollapsed && <span className="text-sm font-medium">Visualizer Map</span>}
-            </div>
-            <div className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5 text-gray-400 hover:text-gray-200 transition-all cursor-pointer">
-              <Activity size={18} />
-              {!isLeftCollapsed && <span className="text-sm font-medium">Mitigation Plan</span>}
-            </div>
-            <div className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5 text-gray-400 hover:text-gray-200 transition-all cursor-pointer">
-              <Layers size={18} />
-              {!isLeftCollapsed && <span className="text-sm font-medium">Thermal Layers</span>}
-            </div>
-            <div className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5 text-gray-400 hover:text-gray-200 transition-all cursor-pointer">
-              <Settings size={18} />
-              {!isLeftCollapsed && <span className="text-sm font-medium">Configuration</span>}
-            </div>
-          </div>
-
-          <div className="p-3 border-t border-white/5 flex items-center justify-center">
-            {!isLeftCollapsed ? (
-              <div className="text-[10px] text-gray-500 text-center font-mono">
-                SYSTEM VER: <span className="text-brand-cyan">1.0.0-BETA</span>
-              </div>
-            ) : (
-              <HelpCircle size={14} className="text-gray-500" />
-            )}
-          </div>
-        </aside>
+        <LeftSidebar activeYear={activeYear} onYearChange={setActiveYear} />
 
         {/* CENTER MAP */}
         <main className="flex-1 glass-card flex flex-col relative overflow-hidden">
           <div className="absolute top-4 left-4 z-10 bg-[#0B1220]/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/5 text-xs text-brand-cyan font-mono flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse" />
-            ACTIVE TWIN AREA: {navState.city.toUpperCase()}
+            ACTIVE TWIN AREA: {navState.city.toUpperCase()} ({activeYear})
           </div>
 
           <div className="flex-1 flex flex-col items-center justify-center gap-3 p-4">
@@ -109,7 +52,7 @@ function App() {
             <div className="text-center">
               <h2 className="text-xl font-bold tracking-wide text-white">CENTER MAP</h2>
               <p className="text-xs text-gray-400 mt-1 max-w-sm">
-                Interactive spatial viewer · Layer: <span className="text-brand-cyan font-mono">{navState.layer}</span> · Scenario: <span className="text-brand-orange font-mono">{navState.scenario}</span>
+                Interactive spatial viewer · Layer: <span className="text-brand-cyan font-mono">{navState.layer}</span> · Scenario: <span className="text-brand-orange font-mono">{navState.scenario}</span> · Year: <span className="text-brand-cyan font-mono">{activeYear}</span>
               </p>
             </div>
           </div>
