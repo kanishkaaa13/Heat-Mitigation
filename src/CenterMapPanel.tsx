@@ -60,21 +60,18 @@ const zoneBlocks: ZoneBlock[] = [
   { id: 'road-1', x: 480, y: 90, width: 90, height: 90, type: 'road', zoneName: 'Main Avenue', temperature: 34.8, riskLevel: 'Moderate' },
   { id: 'warm-2', x: 590, y: 90, width: 110, height: 90, type: 'warm', zoneName: 'Mixed Housing', temperature: 36.9, riskLevel: 'Moderate' },
   { id: 'park-2', x: 720, y: 90, width: 140, height: 90, type: 'park', zoneName: 'Botanical Garden', temperature: 30.2, riskLevel: 'Low' },
-
   { id: 'warm-3', x: 80, y: 220, width: 110, height: 90, type: 'warm', zoneName: 'Industrial Belt', temperature: 39.1, riskLevel: 'Moderate' },
   { id: 'hot-2', x: 210, y: 220, width: 120, height: 90, type: 'hotspot', zoneName: 'CBD Core', temperature: 45.8, riskLevel: 'Critical' },
   { id: 'road-2', x: 350, y: 220, width: 100, height: 90, type: 'road', zoneName: 'Ring Road', temperature: 35.5, riskLevel: 'Moderate' },
   { id: 'warm-4', x: 470, y: 220, width: 120, height: 90, type: 'warm', zoneName: 'Residential East', temperature: 37.1, riskLevel: 'Moderate' },
   { id: 'hot-3', x: 610, y: 220, width: 130, height: 90, type: 'hotspot', zoneName: 'Warehouse District', temperature: 46.4, riskLevel: 'Critical' },
   { id: 'park-3', x: 760, y: 220, width: 100, height: 90, type: 'park', zoneName: 'Urban Wetland', temperature: 28.7, riskLevel: 'Low' },
-
   { id: 'warm-5', x: 80, y: 350, width: 140, height: 90, type: 'warm', zoneName: 'Old Town', temperature: 38.2, riskLevel: 'Moderate' },
   { id: 'hot-4', x: 240, y: 350, width: 120, height: 90, type: 'hotspot', zoneName: 'Solar Corridor', temperature: 47.1, riskLevel: 'Critical' },
   { id: 'road-3', x: 380, y: 350, width: 120, height: 90, type: 'road', zoneName: 'Metro Spine', temperature: 34.1, riskLevel: 'Moderate' },
   { id: 'warm-6', x: 520, y: 350, width: 110, height: 90, type: 'warm', zoneName: 'Low-rise West', temperature: 36.5, riskLevel: 'Moderate' },
   { id: 'park-4', x: 650, y: 350, width: 150, height: 90, type: 'park', zoneName: 'Central Green', temperature: 29.8, riskLevel: 'Low' },
   { id: 'warm-7', x: 820, y: 350, width: 100, height: 90, type: 'warm', zoneName: 'Campus Loop', temperature: 35.4, riskLevel: 'Moderate' },
-
   { id: 'warm-8', x: 140, y: 480, width: 120, height: 90, type: 'warm', zoneName: 'Suburban Fringe', temperature: 35.8, riskLevel: 'Moderate' },
   { id: 'hot-5', x: 280, y: 480, width: 120, height: 90, type: 'hotspot', zoneName: 'Concrete Basin', temperature: 46.8, riskLevel: 'Critical' },
   { id: 'road-4', x: 420, y: 480, width: 120, height: 90, type: 'road', zoneName: 'Harbor Road', temperature: 33.9, riskLevel: 'Moderate' },
@@ -111,11 +108,9 @@ export function CenterMapPanel({
     const x = ((event.clientX - rect.left) / rect.width) * 1000
     const y = ((event.clientY - rect.top) / rect.height) * 700
 
-    if (builderActive && selectedTool) {
-      const burstId = Date.now()
-      setBurst({ id: burstId, x, y })
-      window.setTimeout(() => setBurst(current => (current?.id === burstId ? null : current)), 1200)
-    }
+    const burstId = Date.now()
+    setBurst({ id: burstId, x, y })
+    window.setTimeout(() => setBurst(current => (current?.id === burstId ? null : current)), 1200)
 
     onZoneClick?.({
       zoneName: zone.zoneName,
@@ -126,27 +121,27 @@ export function CenterMapPanel({
 
   return (
     <div className="relative flex-1 overflow-hidden rounded-[18px] border border-white/10 bg-[#07101b]">
-      <div className="absolute left-4 top-4 z-20 rounded-2xl border border-white/10 bg-white/10 px-3 py-2 backdrop-blur-xl">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/45">
+      <div className="interactive-card absolute left-4 top-4 z-20 rounded-2xl border border-white/10 bg-white/10 px-3 py-2 backdrop-blur-xl">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/60">
           Live Urban Pulse
         </div>
-        <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-gray-200">
-          <span>Avg LST: <span className="text-brand-cyan">{stats.avgLst}</span></span>
-          <span>Air Temp: <span className="text-brand-cyan">{stats.airTemp}</span></span>
-          <span>Humidity: <span className="text-brand-cyan">{stats.humidity}</span></span>
-          <span>Wind: <span className="text-brand-cyan">{stats.wind}</span></span>
-          <span>Heat Index: <span className="text-brand-cyan">{stats.heatIndex}</span></span>
+        <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-white/80">
+          <span>Avg LST: <span className="ml-1 font-mono text-brand-cyan">{stats.avgLst}</span></span>
+          <span>Air Temp: <span className="ml-1 font-mono text-brand-cyan">{stats.airTemp}</span></span>
+          <span>Humidity: <span className="ml-1 font-mono text-brand-cyan">{stats.humidity}</span></span>
+          <span>Wind: <span className="ml-1 font-mono text-brand-cyan">{stats.wind}</span></span>
+          <span>Heat Index: <span className="ml-1 font-mono text-brand-cyan">{stats.heatIndex}</span></span>
         </div>
       </div>
 
       <div className="absolute bottom-4 left-4 z-20">
-        <div className="rounded-[20px] border border-white/10 bg-black/40 px-3 py-3 shadow-[0_0_30px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+        <div className="interactive-card rounded-[20px] border border-white/10 bg-black/40 px-3 py-3 shadow-[0_0_30px_rgba(0,0,0,0.35)] backdrop-blur-xl">
           <div className="mb-2 flex items-center justify-between gap-3">
             <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brand-cyan">
               City Builder Mode
             </div>
             {selectedTool && (
-              <span className="rounded-full bg-orange-500 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_0_12px_rgba(249,115,22,0.55)] animate-pulse">
+              <span className="rounded-full bg-orange-500 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-white/80 shadow-[0_0_12px_rgba(249,115,22,0.55)] animate-pulse">
                 Active
               </span>
             )}
@@ -160,7 +155,7 @@ export function CenterMapPanel({
                   type="button"
                   title={tool.label}
                   onClick={() => onToolSelect?.(isSelected ? null : tool.id)}
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl border text-lg transition-all ${isSelected ? 'border-brand-cyan/70 bg-brand-cyan/20 text-brand-cyan shadow-[0_0_14px_rgba(0,229,255,0.25)]' : 'border-white/10 bg-white/5 text-white/70 hover:border-brand-cyan/40 hover:bg-brand-cyan/10 hover:text-brand-cyan'}`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl border text-lg transition-all ${isSelected ? 'border-brand-cyan/70 bg-brand-cyan/20 text-brand-cyan shadow-[0_0_14px_rgba(0,229,255,0.25)]' : 'border-white/10 bg-white/5 text-white/70 hover:border-cyan-400/50 hover:bg-brand-cyan/10 hover:text-brand-cyan'}`}
                 >
                   {tool.icon}
                 </button>
@@ -241,14 +236,16 @@ export function CenterMapPanel({
 
       {burst && (
         <>
-          <svg
-            className="builder-ripple"
-            style={{ left: `${(burst.x / 1000) * 100}%`, top: `${(burst.y / 700) * 100}%` }}
-            viewBox="0 0 40 40"
-            aria-hidden="true"
-          >
-            <circle cx="20" cy="20" r="12" />
-          </svg>
+          {builderActive && selectedTool ? (
+            <svg
+              className="builder-ripple"
+              style={{ left: `${(burst.x / 1000) * 100}%`, top: `${(burst.y / 700) * 100}%` }}
+              viewBox="0 0 40 40"
+              aria-hidden="true"
+            >
+              <circle cx="20" cy="20" r="12" />
+            </svg>
+          ) : null}
           <div
             className="builder-float"
             style={{ left: `${(burst.x / 1000) * 100}%`, top: `${(burst.y / 700) * 100}%` }}

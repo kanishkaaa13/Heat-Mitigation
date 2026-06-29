@@ -16,7 +16,6 @@
   }
 }
 
-/* ── Glassmorphism card ─────────────────────────────────────────────────── */
 @layer components {
   .glass-card {
     backdrop-filter: blur(12px);
@@ -25,9 +24,33 @@
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 18px;
   }
+
+  .interactive-card {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .interactive-card:hover {
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.12), 0 0 20px rgba(34, 211, 238, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .shimmer-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .shimmer-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    animation: shimmer 1.2s infinite;
+  }
 }
 
-/* ── Nav Select ─────────────────────────────────────────────────────────── */
 .nav-select {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.10);
@@ -40,20 +63,18 @@
   border-color: rgba(0, 229, 255, 0.35);
   box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.15);
 }
-/* Remove white option backgrounds in Chromium */
 .nav-select option {
   background: #0f1928;
   color: #e2e8f0;
 }
 
-/* ── Nav Input (date) ───────────────────────────────────────────────────── */
 .nav-input {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.10);
   color: rgba(255, 255, 255, 0.85);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
-  color-scheme: dark;   /* makes the calendar picker dark in Chrome/Edge */
+  color-scheme: dark;
 }
 .nav-input:hover,
 .nav-input:focus {
@@ -61,7 +82,6 @@
   box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.15);
 }
 
-/* ── Range Slider ───────────────────────────────────────────────────────── */
 .nav-slider {
   -webkit-appearance: none;
   appearance: none;
@@ -118,7 +138,6 @@
   background: #00E5FF;
 }
 
-/* ── Left Sidebar Checkbox ──────────────────────────────────────────────── */
 .sidebar-checkbox {
   -webkit-appearance: none;
   appearance: none;
@@ -150,11 +169,10 @@
   box-shadow: 0 0 4px #00E5FF;
 }
 
-/* ── Timeline Vertical Slider ───────────────────────────────────────────── */
 .timeline-slider {
   -webkit-appearance: none;
   appearance: none;
-  transform: rotate(270deg); /* Rotates layout to vertical orientation */
+  transform: rotate(270deg);
   background: rgba(255, 255, 255, 0.08);
   height: 4px;
   border-radius: 2px;
@@ -187,7 +205,6 @@
   cursor: pointer;
 }
 
-/* ── Custom Scrollbar ───────────────────────────────────────────────────── */
 .sidebar-scroll::-webkit-scrollbar {
   width: 4px;
 }
@@ -202,19 +219,20 @@
   background: rgba(0, 229, 255, 0.25);
 }
 
-/* ── Center Map Animations ─────────────────────────────────────────────── */
 .hotspot-block {
-  animation: hotspotPulse 2s ease-in-out infinite;
+  animation: pulseShimmer 2s ease-in-out infinite;
   transform-origin: center;
 }
 
-@keyframes hotspotPulse {
+@keyframes pulseShimmer {
   0%, 100% {
     transform: scale(1);
+    filter: brightness(1);
     opacity: 0.9;
   }
   50% {
     transform: scale(1.02);
+    filter: brightness(1.14);
     opacity: 1;
   }
 }
@@ -298,6 +316,12 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
   }
 }
 
