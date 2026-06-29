@@ -220,11 +220,11 @@
 }
 
 .hotspot-block {
-  animation: pulseShimmer 2s ease-in-out infinite;
+  animation: pulse-shimmer 2s ease-in-out infinite;
   transform-origin: center;
 }
 
-@keyframes pulseShimmer {
+@keyframes pulse-shimmer {
   0%, 100% {
     transform: scale(1);
     filter: brightness(1);

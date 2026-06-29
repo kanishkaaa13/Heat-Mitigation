@@ -64,6 +64,7 @@ function App() {
 
         <RightPanel
           selectedZone={selectedZone}
+          city={navState.city}
           activeScenario={navState.scenario}
           appliedInterventions={appliedInterventions}
           onInterventionsChange={setAppliedInterventions}
@@ -80,7 +81,7 @@ function App() {
             <div>ALBEDO AVG: <span className="text-brand-cyan font-bold">0.18</span></div>
           </div>
         </div>
-        <BottomAnalyticsPanel />
+        <BottomAnalyticsPanel city={navState.city} />
       </footer>
 
       <AiChatAssistant />

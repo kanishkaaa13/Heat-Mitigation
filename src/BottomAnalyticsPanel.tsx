@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Area,
   AreaChart,
@@ -61,23 +63,58 @@ const vulnerabilityData = [
   { year: '2026', historical: 30, current: 39, predicted: 45 },
 ]
 
-function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
+function ChartCard({ title, children, delay = 0, isLoading = false }: { title: string; children: React.ReactNode; delay?: number; isLoading?: boolean }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col rounded-[16px] border border-white/10 bg-black/20 p-2 backdrop-blur">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay }}
+      className="flex min-h-0 flex-1 flex-col rounded-[16px] border border-white/10 bg-black/20 p-2 backdrop-blur"
+    >
       <div className="mb-1 px-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-cyan-300">{title}</div>
       <div className="min-h-0 flex-1">
-        {children}
+        {isLoading ? (
+          <div className="h-full w-full rounded-xl shimmer-skeleton" />
+        ) : (
+          children
+        )}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
-export function BottomAnalyticsPanel() {
+export function BottomAnalyticsPanel({ city }: { city: string }) {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setIsLoading(false), 1000)
+    return () => window.clearTimeout(timeout)
+  }, [])
+
+  const cityProfile = useMemo(() => {
+    switch (city) {
+      case 'Delhi':
+        return { tempOffset: 1.8, rainfallOffset: -8, coolingOffset: 0.3 }
+      case 'Mumbai':
+        return { tempOffset: -1.2, rainfallOffset: 12, coolingOffset: -0.2 }
+      case 'Chennai':
+        return { tempOffset: 0.6, rainfallOffset: 4, coolingOffset: 0.1 }
+      case 'Hyderabad':
+        return { tempOffset: 0.9, rainfallOffset: -3, coolingOffset: 0.2 }
+      default:
+        return { tempOffset: 0, rainfallOffset: 0, coolingOffset: 0 }
+    }
+  }, [city])
+
+  const tempSeries = useMemo(() => temperatureData.map(item => ({ ...item, lst: Number(item.lst) + cityProfile.tempOffset })), [cityProfile])
+  const rainfallSeries = useMemo(() => rainfallData.map(item => ({ ...item, rainfall: Number(item.rainfall) + cityProfile.rainfallOffset, lst: Number(item.lst) + cityProfile.tempOffset })), [cityProfile])
+  const coolingValue = useMemo(() => (4.2 + cityProfile.coolingOffset).toFixed(1), [cityProfile])
+
   return (
     <div className="flex flex-1 gap-2 overflow-x-auto p-3">
-      <ChartCard title="Temperature Trend">
+      <ChartCard title="Temperature Trend" delay={0.1} isLoading={isLoading}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={temperatureData}>
+          <AreaChart data={tempSeries}>
             <defs>
               <linearGradient id="lstFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#00E5FF" stopOpacity={0.55} />
@@ -93,9 +130,9 @@ export function BottomAnalyticsPanel() {
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title="Rainfall vs LST">
+      <ChartCard title="Rainfall vs LST" delay={0.2} isLoading={isLoading}>
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={rainfallData}>
+          <ComposedChart data={rainfallSeries}>
             <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />
             <XAxis dataKey="year" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }} axisLine={false} tickLine={false} />
             <YAxis yAxisId="left" tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }} axisLine={false} tickLine={false} />
@@ -107,7 +144,7 @@ export function BottomAnalyticsPanel() {
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title="Cooling Contribution">
+      <ChartCard title="Cooling Contribution" delay={0.3} isLoading={isLoading}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie data={coolingData} dataKey="value" innerRadius={34} outerRadius={48} paddingAngle={2} animationDuration={800}>
@@ -121,12 +158,12 @@ export function BottomAnalyticsPanel() {
         <div className="relative -mt-16 mb-2 flex justify-center">
           <div className="text-center">
             <div className="text-[10px] uppercase tracking-[0.2em] text-white/45">Total Cooling</div>
-            <div className="text-sm font-semibold text-brand-cyan">4.2°C</div>
+            <div className="text-sm font-semibold font-mono text-brand-cyan">{coolingValue}°C</div>
           </div>
         </div>
       </ChartCard>
 
-      <ChartCard title="Heat Vulnerability Timeline">
+      <ChartCard title="Heat Vulnerability Timeline" delay={0.4} isLoading={isLoading}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={vulnerabilityData}>
             <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />

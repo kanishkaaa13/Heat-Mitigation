@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from 'react'
+import { useMemo, useState, type MouseEvent } from 'react'
 
 type ZoneType = 'park' | 'warm' | 'hotspot' | 'road'
 
@@ -100,6 +100,19 @@ export function CenterMapPanel({
 }: CenterMapPanelProps) {
   const [burst, setBurst] = useState<{ id: number; x: number; y: number } | null>(null)
 
+  const derivedStats = useMemo(() => {
+    const parse = (value: string) => Number.parseFloat(value)
+    const base = parse(stats.avgLst)
+    const yearOffset = (activeYear - 2026) * 0.12
+    return {
+      avgLst: `${(base + yearOffset).toFixed(1)}°C`,
+      airTemp: `${(parse(stats.airTemp) + yearOffset * 0.7).toFixed(1)}°C`,
+      humidity: `${Math.max(35, Number.parseInt(stats.humidity, 10) - (activeYear - 2026) * 0.4).toFixed(0)}%`,
+      wind: `${(Number.parseFloat(stats.wind) + (activeYear - 2026) * 0.02).toFixed(1)} m/s`,
+      heatIndex: `${(parse(stats.heatIndex) + yearOffset * 0.8).toFixed(0)}°C`,
+    }
+  }, [activeYear, stats])
+
   const handleZoneClick = (event: MouseEvent<SVGRectElement>, zone: ZoneBlock) => {
     const svg = event.currentTarget.ownerSVGElement
     if (!svg) return
@@ -126,11 +139,11 @@ export function CenterMapPanel({
           Live Urban Pulse
         </div>
         <div className="mt-1 flex flex-wrap gap-2 text-[11px] text-white/80">
-          <span>Avg LST: <span className="ml-1 font-mono text-brand-cyan">{stats.avgLst}</span></span>
-          <span>Air Temp: <span className="ml-1 font-mono text-brand-cyan">{stats.airTemp}</span></span>
-          <span>Humidity: <span className="ml-1 font-mono text-brand-cyan">{stats.humidity}</span></span>
-          <span>Wind: <span className="ml-1 font-mono text-brand-cyan">{stats.wind}</span></span>
-          <span>Heat Index: <span className="ml-1 font-mono text-brand-cyan">{stats.heatIndex}</span></span>
+          <span>Avg LST: <span className="ml-1 font-mono text-brand-cyan">{derivedStats.avgLst}</span></span>
+          <span>Air Temp: <span className="ml-1 font-mono text-brand-cyan">{derivedStats.airTemp}</span></span>
+          <span>Humidity: <span className="ml-1 font-mono text-brand-cyan">{derivedStats.humidity}</span></span>
+          <span>Wind: <span className="ml-1 font-mono text-brand-cyan">{derivedStats.wind}</span></span>
+          <span>Heat Index: <span className="ml-1 font-mono text-brand-cyan">{derivedStats.heatIndex}</span></span>
         </div>
       </div>
 

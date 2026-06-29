@@ -109,7 +109,7 @@ export function AiChatAssistant() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-full border border-white/10 bg-white/5 p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white"
+              className="rounded-full border border-white/10 bg-white/5 p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white/80"
               aria-label="Close AI assistant"
             >
               <X size={16} />
@@ -137,7 +137,7 @@ export function AiChatAssistant() {
                   sendMessage()
                 }
               }}
-              className="flex-1 bg-transparent px-2 py-2 text-sm text-white outline-none placeholder:text-white/40"
+              className="flex-1 bg-transparent px-2 py-2 text-sm text-white/80 outline-none placeholder:text-white/40"
               placeholder="Ask about your city's heat..."
             />
             <button
