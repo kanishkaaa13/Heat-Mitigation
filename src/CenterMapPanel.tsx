@@ -25,6 +25,9 @@ interface CenterMapPanelProps {
   city: string
   layer: string
   scenario: string
+  builderActive: boolean
+  selectedTool: string | null
+  onToolSelect?: (tool: string | null) => void
   onZoneClick?: (zone: ZoneData) => void
   stats?: {
     avgLst: string
@@ -34,6 +37,21 @@ interface CenterMapPanelProps {
     heatIndex: string
   }
 }
+
+const builderTools = [
+  { id: 'tree', icon: '🌳', label: 'Tree Brush' },
+  { id: 'building', icon: '🏢', label: 'Building' },
+  { id: 'water', icon: '🌊', label: 'Water' },
+  { id: 'green-roof', icon: '🌿', label: 'Green Roof' },
+  { id: 'cool-roof', icon: '🟦', label: 'Cool Roof' },
+  { id: 'reflective-road', icon: '🛣', label: 'Reflective Road' },
+  { id: 'park', icon: '🌱', label: 'Park' },
+  { id: 'rain-garden', icon: '💧', label: 'Rain Garden' },
+  { id: 'permeable', icon: '🧱', label: 'Permeable Pavement' },
+  { id: 'bus-shade', icon: '🚌', label: 'Bus Shade' },
+  { id: 'solar', icon: '☀️', label: 'Solar Panel' },
+  { id: 'mist', icon: '💨', label: 'Mist Cooling' },
+]
 
 const zoneBlocks: ZoneBlock[] = [
   { id: 'park-1', x: 80, y: 90, width: 120, height: 90, type: 'park', zoneName: 'River Park', temperature: 29.4, riskLevel: 'Low' },
@@ -77,10 +95,12 @@ export function CenterMapPanel({
   city,
   layer,
   scenario,
+  builderActive,
+  selectedTool,
+  onToolSelect,
   onZoneClick,
   stats = defaultStats,
 }: CenterMapPanelProps) {
-  const [builderMode, setBuilderMode] = useState(false)
   const [burst, setBurst] = useState<{ id: number; x: number; y: number } | null>(null)
 
   const handleZoneClick = (event: MouseEvent<SVGRectElement>, zone: ZoneBlock) => {
@@ -91,9 +111,10 @@ export function CenterMapPanel({
     const x = ((event.clientX - rect.left) / rect.width) * 1000
     const y = ((event.clientY - rect.top) / rect.height) * 700
 
-    if (builderMode) {
-      setBurst({ id: Date.now(), x, y })
-      window.setTimeout(() => setBurst(current => (current?.id === burst?.id ? null : current)), 1200)
+    if (builderActive && selectedTool) {
+      const burstId = Date.now()
+      setBurst({ id: burstId, x, y })
+      window.setTimeout(() => setBurst(current => (current?.id === burstId ? null : current)), 1200)
     }
 
     onZoneClick?.({
@@ -118,14 +139,35 @@ export function CenterMapPanel({
         </div>
       </div>
 
-      <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setBuilderMode(value => !value)}
-          className={`rounded-full border px-3 py-1 text-[11px] font-medium transition ${builderMode ? 'border-brand-cyan/60 bg-brand-cyan/15 text-brand-cyan' : 'border-white/10 bg-white/10 text-gray-300 hover:border-brand-cyan/40 hover:text-brand-cyan'}`}
-        >
-          {builderMode ? 'Builder Mode On' : 'Builder Mode'}
-        </button>
+      <div className="absolute bottom-4 left-4 z-20">
+        <div className="rounded-[20px] border border-white/10 bg-black/40 px-3 py-3 shadow-[0_0_30px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-brand-cyan">
+              City Builder Mode
+            </div>
+            {selectedTool && (
+              <span className="rounded-full bg-orange-500 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_0_12px_rgba(249,115,22,0.55)] animate-pulse">
+                Active
+              </span>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            {builderTools.map(tool => {
+              const isSelected = selectedTool === tool.id
+              return (
+                <button
+                  key={tool.id}
+                  type="button"
+                  title={tool.label}
+                  onClick={() => onToolSelect?.(isSelected ? null : tool.id)}
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl border text-lg transition-all ${isSelected ? 'border-brand-cyan/70 bg-brand-cyan/20 text-brand-cyan shadow-[0_0_14px_rgba(0,229,255,0.25)]' : 'border-white/10 bg-white/5 text-white/70 hover:border-brand-cyan/40 hover:bg-brand-cyan/10 hover:text-brand-cyan'}`}
+                >
+                  {tool.icon}
+                </button>
+              )
+            })}
+          </div>
+        </div>
       </div>
 
       <div className="absolute left-4 top-24 z-10 rounded-full border border-white/10 bg-[#07101b]/70 px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-white/60 backdrop-blur">
@@ -199,10 +241,14 @@ export function CenterMapPanel({
 
       {burst && (
         <>
-          <div
+          <svg
             className="builder-ripple"
             style={{ left: `${(burst.x / 1000) * 100}%`, top: `${(burst.y / 700) * 100}%` }}
-          />
+            viewBox="0 0 40 40"
+            aria-hidden="true"
+          >
+            <circle cx="20" cy="20" r="12" />
+          </svg>
           <div
             className="builder-float"
             style={{ left: `${(burst.x / 1000) * 100}%`, top: `${(burst.y / 700) * 100}%` }}

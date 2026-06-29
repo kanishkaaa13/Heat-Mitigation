@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import {
   Activity,
-  Settings,
 } from 'lucide-react'
 import { TopNav, type TopNavState } from './TopNav'
 import { LeftSidebar } from './LeftSidebar'
 import { CenterMapPanel } from './CenterMapPanel'
+import { RightPanel } from './RightPanel'
 
 // Today's date in YYYY-MM-DD for the default date picker value
 const todayISO = new Date().toISOString().slice(0, 10)
@@ -26,8 +26,12 @@ function App() {
   const handleNavChange = (patch: Partial<TopNavState>) =>
     setNavState(prev => ({ ...prev, ...patch }))
 
+  const [builderTool, setBuilderTool] = useState<string | null>(null)
+  const builderActive = Boolean(builderTool)
+  const [selectedZone, setSelectedZone] = useState<{ zoneName: string; temperature: number; riskLevel: 'Low' | 'Moderate' | 'Critical' } | null>(null)
+
   const handleZoneClick = (zone: { zoneName: string; temperature: number; riskLevel: 'Low' | 'Moderate' | 'Critical' }) => {
-    console.info('Zone selected:', zone)
+    setSelectedZone(zone)
   }
 
   return (
@@ -49,30 +53,15 @@ function App() {
             city={navState.city}
             layer={navState.layer}
             scenario={navState.scenario}
+            builderActive={builderActive}
+            selectedTool={builderTool}
+            onToolSelect={setBuilderTool}
             onZoneClick={handleZoneClick}
           />
         </main>
 
         {/* RIGHT PANEL */}
-        <aside className="w-80 shrink-0 glass-card flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-white/5 flex items-center justify-between">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-mono font-medium">
-              RIGHT PANEL
-            </span>
-            <span className="w-2 h-2 rounded-full bg-brand-orange" />
-          </div>
-          <div className="flex-1 p-4 flex flex-col items-center justify-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-brand-orange/5 border border-brand-orange/20 flex items-center justify-center text-brand-orange shadow-[0_0_20px_rgba(255,107,53,0.15)]">
-              <Settings size={24} />
-            </div>
-            <div className="text-center">
-              <h3 className="text-sm font-semibold tracking-wide text-white">RIGHT PANEL</h3>
-              <p className="text-[11px] text-gray-400 mt-1 px-4">
-                Controls panel for overlay metrics, parameters adjustments, and simulation scenarios.
-              </p>
-            </div>
-          </div>
-        </aside>
+        <RightPanel selectedZone={selectedZone} />
       </div>
 
       {/* ── BOTTOM PANEL ────────────────────────────────────────────────── */}
