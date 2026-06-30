@@ -3,13 +3,17 @@ from __future__ import annotations
 import argparse
 import os
 from pathlib import Path
-from typing import Iterable, List, Sequence, Tuple
+from typing import List, Sequence, Tuple
 
 import numpy as np
-import rasterio
 import xarray as xr
 from rasterio.transform import from_origin
 from rasterio.warp import reproject, Resampling
+
+try:
+    import rasterio
+except ImportError as exc:  # pragma: no cover - optional dependency
+    raise RuntimeError("rasterio is required. Install it with 'pip install rasterio'.") from exc
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"

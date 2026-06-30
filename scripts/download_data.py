@@ -190,9 +190,23 @@ def main() -> None:
     years = sorted(args.years)
 
     print(f"Starting download run for years {years}")
-    landsat_files = download_landsat(args.landsat_out, years, AOI, cloud_max=args.cloud_max)
-    era5_files = download_era5(args.era5_out, years, AOI)
-    ecostress_files = download_ecostress(args.ecostress_out, years, AOI)
+    try:
+        landsat_files = download_landsat(args.landsat_out, years, AOI, cloud_max=args.cloud_max)
+    except RuntimeError as exc:
+        print(f"Landsat step skipped: {exc}")
+        landsat_files = []
+
+    try:
+        era5_files = download_era5(args.era5_out, years, AOI)
+    except RuntimeError as exc:
+        print(f"ERA5 step skipped: {exc}")
+        era5_files = []
+
+    try:
+        ecostress_files = download_ecostress(args.ecostress_out, years, AOI)
+    except RuntimeError as exc:
+        print(f"ECOSTRESS step skipped: {exc}")
+        ecostress_files = []
 
     print("Download workflow finished")
     print(f"Landsat files: {len(landsat_files)}")
