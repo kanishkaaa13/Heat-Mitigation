@@ -200,7 +200,7 @@ def stack_rasters(raster_paths: Sequence[Path], output_path: Path) -> None:
             dst.write(array, band_idx)
 
 
-def preprocess_year(year: int, landsat_dir: Path, era5_dir: Path, ecostress_dir: Path, output_dir: Path) -> Path:
+def preprocess_year(year: int, landsat_dir: Path, era5_dir: Path, ecostress_dir: Path, output_dir: Path) -> Path | None:
     ensure_dir(output_dir)
     template_transform, template_shape = build_template_grid(AOI)
 
@@ -209,7 +209,8 @@ def preprocess_year(year: int, landsat_dir: Path, era5_dir: Path, ecostress_dir:
     ecostress_path = next((path for path in ecostress_dir.glob(f"*{year}*.h5") if path.is_file()), None)
 
     if landsat_path is None:
-        raise FileNotFoundError(f"No Landsat file found for year {year}")
+        print(f"Skipping {year}: no Landsat input found in {landsat_dir}")
+        return None
 
     landsat_aligned = preprocess_landsat(landsat_path, output_dir, template_transform, template_shape)
     era5_aligned = []
@@ -243,7 +244,8 @@ def main() -> None:
 
     for year in sorted(args.years):
         output_path = preprocess_year(year, args.landsat_dir, args.era5_dir, args.ecostress_dir, args.output_dir)
-        print(f"Created processed stack: {output_path}")
+        if output_path is not None:
+            print(f"Created processed stack: {output_path}")
 
 
 if __name__ == "__main__":
