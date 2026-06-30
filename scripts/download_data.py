@@ -104,7 +104,12 @@ def download_era5(output_dir: Path, years: Sequence[int], aoi: dict) -> List[Pat
         raise RuntimeError("cdsapi is required. Install it with 'pip install cdsapi'.")
 
     ensure_dir(output_dir)
-    client = cdsapi.Client()
+    try:
+        client = cdsapi.Client()
+    except Exception as exc:  # pragma: no cover - runtime-only
+        raise RuntimeError(
+            "CDS API credentials are missing. Create a ~/.cdsapirc file with your CDS API key."
+        ) from exc
     outputs: List[Path] = []
 
     for year in years:
@@ -149,8 +154,11 @@ def download_ecostress(output_dir: Path, years: Sequence[int], aoi: dict) -> Lis
         raise RuntimeError("earthaccess is required. Install it with 'pip install earthaccess'.")
 
     ensure_dir(output_dir)
-    if not earthaccess.login(strategy="interactive"):
-        raise RuntimeError("Earthaccess login failed. Please authenticate with NASA Earthdata.")
+    try:
+        if not earthaccess.login(strategy="interactive"):
+            raise RuntimeError("Earthaccess login failed. Please authenticate with NASA Earthdata.")
+    except Exception as exc:  # pragma: no cover - runtime-only
+        raise RuntimeError("Earthaccess login failed. Please authenticate with NASA Earthdata.") from exc
 
     outputs: List[Path] = []
     for year in years:
@@ -192,19 +200,19 @@ def main() -> None:
     print(f"Starting download run for years {years}")
     try:
         landsat_files = download_landsat(args.landsat_out, years, AOI, cloud_max=args.cloud_max)
-    except RuntimeError as exc:
+    except Exception as exc:
         print(f"Landsat step skipped: {exc}")
         landsat_files = []
 
     try:
         era5_files = download_era5(args.era5_out, years, AOI)
-    except RuntimeError as exc:
+    except Exception as exc:
         print(f"ERA5 step skipped: {exc}")
         era5_files = []
 
     try:
         ecostress_files = download_ecostress(args.ecostress_out, years, AOI)
-    except RuntimeError as exc:
+    except Exception as exc:
         print(f"ECOSTRESS step skipped: {exc}")
         ecostress_files = []
 
