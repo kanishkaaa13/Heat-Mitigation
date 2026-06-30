@@ -145,29 +145,33 @@ def preprocess_era5(input_path: Path, output_dir: Path, template_transform, temp
     return outputs
 
 
-def preprocess_ecostress(input_path: Path, output_dir: Path, template_transform, template_shape) -> Path:
+def preprocess_ecostress(input_path: Path, output_dir: Path, template_transform, template_shape) -> Path | None:
     try:
         import h5py
     except ImportError as exc:  # pragma: no cover - optional dependency
         raise RuntimeError("h5py is required to preprocess ECOSTRESS HDF5 products") from exc
 
     output_path = output_dir / f"{input_path.stem}_aligned.tif"
-    with h5py.File(input_path, "r") as h5:
-        candidates = []
-        def walk(node, prefix=""):
-            if isinstance(node, h5py.Dataset):
-                if node.ndim == 2 and node.shape[0] > 1 and node.shape[1] > 1:
-                    candidates.append((prefix, node.shape))
-            elif isinstance(node, h5py.Group):
-                for key, value in node.items():
-                    walk(value, f"{prefix}/{key}" if prefix else key)
-        walk(h5)
+    try:
+        with h5py.File(input_path, "r") as h5:
+            candidates = []
+            def walk(node, prefix=""):
+                if isinstance(node, h5py.Dataset):
+                    if node.ndim == 2 and node.shape[0] > 1 and node.shape[1] > 1:
+                        candidates.append((prefix, node.shape))
+                elif isinstance(node, h5py.Group):
+                    for key, value in node.items():
+                        walk(value, f"{prefix}/{key}" if prefix else key)
+            walk(h5)
 
-        if not candidates:
-            raise ValueError(f"No suitable 2D dataset found in {input_path}")
+            if not candidates:
+                raise ValueError(f"No suitable 2D dataset found in {input_path}")
 
-        dataset_name = candidates[0][0]
-        data = h5[dataset_name][...].astype(np.float32)
+            dataset_name = candidates[0][0]
+            data = h5[dataset_name][...].astype(np.float32)
+    except Exception as exc:
+        print(f"Skipping ECOSTRESS file {input_path}: {exc}")
+        return None
 
     with rasterio.open(
         output_path,
@@ -228,9 +232,15 @@ def preprocess_year(year: int, landsat_dir: Path, era5_dir: Path, ecostress_dir:
 
     if ecostress_path is not None:
         ecostress_aligned = preprocess_ecostress(ecostress_path, output_dir, template_transform, template_shape)
-        stack_inputs = [landsat_aligned, *era5_aligned, ecostress_aligned]
+        stack_inputs = [landsat_aligned, *era5_aligned]
+        if ecostress_aligned is not None:
+            stack_inputs.append(ecostress_aligned)
     else:
         stack_inputs = [landsat_aligned, *era5_aligned]
+
+    if not stack_inputs:
+        print(f"Skipping {year}: no valid raster inputs could be prepared")
+        return None
 
     output_path = output_dir / f"{year}_stacked.tif"
     stack_rasters(stack_inputs, output_path)
