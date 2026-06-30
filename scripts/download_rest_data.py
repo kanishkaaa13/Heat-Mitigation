@@ -3,7 +3,9 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-import requests
+import numpy as np
+import rasterio
+from rasterio.transform import from_origin
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
@@ -24,15 +26,27 @@ def ensure_dir(path: Path) -> Path:
     return path
 
 
-def download_sample_landsat(url: str, output_path: Path) -> None:
+def download_sample_landsat(output_path: Path) -> None:
     ensure_dir(output_path.parent)
-    print(f"Downloading Landsat sample from {url}")
-    response = requests.get(url, stream=True, timeout=600)
-    response.raise_for_status()
-    with output_path.open("wb") as fh:
-        for chunk in response.iter_content(chunk_size=1024 * 1024):
-            if chunk:
-                fh.write(chunk)
+    print(f"Creating synthetic Landsat sample at {output_path}")
+    height = width = 64
+    x = np.linspace(0, 1, width)
+    y = np.linspace(0, 1, height)
+    xx, yy = np.meshgrid(x, y)
+    data = (35 + 8 * np.exp(-((xx - 0.35) ** 2 + (yy - 0.6) ** 2) / 0.04) + 2 * np.sin(xx * 6)).astype(np.float32)
+
+    with rasterio.open(
+        output_path,
+        "w",
+        driver="GTiff",
+        height=height,
+        width=width,
+        count=1,
+        dtype="float32",
+        crs="EPSG:32643",
+        transform=from_origin(77.4, 13.1, 0.00025, 0.00025),
+    ) as dst:
+        dst.write(data, 1)
 
 
 def download_era5_sample(output_path: Path) -> None:
@@ -48,12 +62,7 @@ def download_ecostress_sample(output_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    # Replace the sample URL below with a real public Landsat download URL
-    sample_landsat_url = os.getenv(
-        "LANDSAT_URL",
-        "https://example.com/landsat_sample.tif",
-    )
-    download_sample_landsat(sample_landsat_url, LANDSAT_DIR / "landsat_lst_2016.tif")
+    download_sample_landsat(LANDSAT_DIR / "landsat_lst_2016.tif")
     download_era5_sample(ERA5_DIR / "era5_2016_03.nc")
     download_ecostress_sample(ECOSTRESS_DIR / "ecostress_2016.h5")
-    print("Sample data placeholders created. Replace URLs with real downloads for production use.")
+    print("Synthetic sample data created. Replace with real downloads for production use.")

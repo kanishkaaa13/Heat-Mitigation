@@ -95,7 +95,16 @@ def preprocess_landsat(input_path: Path, output_dir: Path, template_transform, t
 
 def preprocess_era5(input_path: Path, output_dir: Path, template_transform, template_shape) -> List[Path]:
     outputs: List[Path] = []
-    ds = xr.open_dataset(input_path)
+    if input_path.suffix.lower() != ".nc":
+        print(f"Skipping non-NetCDF ERA5 file: {input_path}")
+        return outputs
+
+    try:
+        ds = xr.open_dataset(input_path)
+    except Exception as exc:
+        print(f"Skipping ERA5 file {input_path}: {exc}")
+        return outputs
+
     for var in [
         "2m_temperature",
         "surface_pressure",
