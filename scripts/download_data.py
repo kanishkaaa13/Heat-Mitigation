@@ -47,17 +47,21 @@ def build_region(aoi: dict) -> list[float]:
 
 
 def download_landsat(output_dir: Path, years: Sequence[int], aoi: dict, cloud_max: float = 20.0) -> List[Path]:
-    """Download Landsat LST composites for each year using Google Earth Engine."""
+    """Download Landsat LST composites for each year using Google Earth Engine or use manually placed GeoTIFFs."""
     if ee is None:
         raise RuntimeError("earthengine-api is required. Install it with 'pip install earthengine-api'.")
 
     ensure_dir(output_dir)
 
+    existing_files = sorted(path for path in output_dir.glob("landsat_lst_*.tif") if path.is_file())
+    if existing_files:
+        return existing_files
+
     try:
         ee.Initialize(project=os.getenv("GOOGLE_CLOUD_PROJECT"))
     except Exception as exc:  # pragma: no cover - runtime-only
         raise RuntimeError(
-            "Earth Engine is not initialized. Run 'earthengine authenticate' and initialize with a Google Cloud project."
+            "Earth Engine is not available. Download Landsat GeoTIFFs manually from USGS EarthExplorer or place them in the data/landsat folder and rerun preprocessing."
         ) from exc
 
     region = build_region(aoi)
