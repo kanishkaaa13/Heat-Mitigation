@@ -6,9 +6,13 @@ from pathlib import Path
 from typing import List, Sequence, Tuple
 
 import numpy as np
-import xarray as xr
 from rasterio.transform import from_origin
 from rasterio.warp import reproject, Resampling
+
+try:
+    import xarray as xr
+except ImportError:  # pragma: no cover - optional dependency
+    xr = None
 
 try:
     import rasterio
@@ -97,6 +101,10 @@ def preprocess_era5(input_path: Path, output_dir: Path, template_transform, temp
     outputs: List[Path] = []
     if input_path.suffix.lower() != ".nc":
         print(f"Skipping non-NetCDF ERA5 file: {input_path}")
+        return outputs
+
+    if xr is None:
+        print(f"Skipping ERA5 file {input_path}: xarray is not available")
         return outputs
 
     try:

@@ -159,10 +159,13 @@ def download_ecostress(output_dir: Path, years: Sequence[int], aoi: dict) -> Lis
 
     ensure_dir(output_dir)
     try:
-        if not earthaccess.login(strategy="interactive"):
-            raise RuntimeError("Earthaccess login failed. Please authenticate with NASA Earthdata.")
+        login_result = earthaccess.login(strategy="netrc")
+        if not login_result:
+            print("No Earthdata netrc credentials found; skipping ECOSTRESS download.")
+            return []
     except Exception as exc:  # pragma: no cover - runtime-only
-        raise RuntimeError("Earthaccess login failed. Please authenticate with NASA Earthdata.") from exc
+        print(f"Skipping ECOSTRESS download: {exc}")
+        return []
 
     outputs: List[Path] = []
     for year in years:
